@@ -12,6 +12,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +28,10 @@ import java.util.List;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreateRequest request) {
-        log.info("Service: Create user");
-        log.info("Request: {}", request.getGender());
+
         if (userRepository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
 
@@ -38,6 +42,7 @@ public class UserService {
             throw new AppException(ErrorCode.GENDER_EMPTY);
 
         User user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -47,6 +52,17 @@ public class UserService {
                 .map(userMapper::toUserResponse).toList();
     }
 
+    public UserResponse getMyInfoUser(){
+        var context = SecurityContextHolder.getContext();
+
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        return userMapper.toUserResponse(user);
+    }
+
     public UserResponse getUserById(String id) {
         return userMapper.toUserResponse(
                 userRepository
@@ -54,6 +70,7 @@ public class UserService {
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND))
         );
     }
+
     public UserResponse updateUser(String id, UserUpdateRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

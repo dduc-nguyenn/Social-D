@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     UNCATEGORIZED(9999, "Uncategorized Error", HttpStatus.INTERNAL_SERVER_ERROR),
+    UNAUTHENTICATED(9001, "You are not authenticated!", HttpStatus.UNAUTHORIZED),
 
     USER_EXISTED(1001, "User already existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1002, "Email already existed", HttpStatus.BAD_REQUEST),
@@ -20,7 +21,7 @@ public enum ErrorCode {
     GENDER_EMPTY(3003, "Please choose a gender. You can change who can see this later.", HttpStatus.BAD_REQUEST),
 
     USER_NOT_FOUND(4004, "User not found!", HttpStatus.NOT_FOUND),
-
+    USER_NOT_EXISTED(4005, "User not existed!", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;

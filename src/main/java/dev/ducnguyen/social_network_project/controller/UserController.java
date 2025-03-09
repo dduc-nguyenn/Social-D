@@ -10,13 +10,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
@@ -31,8 +32,21 @@ public class UserController {
 
     @GetMapping
     ApiResponse<List<UserResponse>> getAll() {
+        var user = SecurityContextHolder.getContext().getAuthentication();
+        log.info("User: {}", user.getName());
+
+        user.getAuthorities().forEach(
+                authority -> log.info("Authority: {}", authority.getAuthority()));
+
         return ApiResponse.<List<UserResponse>>builder()
                 .data(userService.getAllUsers())
+                .build();
+    }
+
+    @GetMapping("/my-info")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .data(userService.getMyInfoUser())
                 .build();
     }
 

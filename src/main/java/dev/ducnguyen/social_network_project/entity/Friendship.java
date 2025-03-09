@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Table(name = "friendships")
 public class Friendship {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
 
     @Enumerated(EnumType.STRING)
     FriendshipStatus status = FriendshipStatus.PENDING;
