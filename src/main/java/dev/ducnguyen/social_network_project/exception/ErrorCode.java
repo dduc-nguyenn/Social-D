@@ -8,13 +8,14 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     UNCATEGORIZED(9999, "Uncategorized Error", HttpStatus.INTERNAL_SERVER_ERROR),
     UNAUTHENTICATED(9001, "You are not authenticated!", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(9002, "You don't have permission!", HttpStatus.FORBIDDEN),
 
     USER_EXISTED(1001, "User already existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1002, "Email already existed", HttpStatus.BAD_REQUEST),
 
     PASSWORD_INVALID(2001, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     EMAIL_INVALID(2002, "Please enter a valid email", HttpStatus.BAD_REQUEST),
-    KEY_INVALID(2003, "Invalid message key", HttpStatus.INTERNAL_SERVER_ERROR),
+    KEY_INVALID(2003, "Invalid message key", HttpStatus.BAD_REQUEST),
 
     FIRSTNAME_EMPTY(3001, "What's your first name", HttpStatus.BAD_REQUEST),
     SURNAME_EMPTY(3002, "What's your sur name", HttpStatus.BAD_REQUEST),

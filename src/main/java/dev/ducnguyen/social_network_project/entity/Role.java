@@ -16,9 +16,8 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-
     @Column(unique = true, nullable = false)
     String name;
+
+    String description;
 }
