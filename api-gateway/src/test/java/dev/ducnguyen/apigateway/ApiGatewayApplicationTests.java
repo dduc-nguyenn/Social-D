@@ -1,10 +1,10 @@
-package dev.ducnguyen.profile;
+package dev.ducnguyen.apigateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ProfileServiceApplicationTests {
+class ApiGatewayApplicationTests {
 
     @Test
     void contextLoads() {
