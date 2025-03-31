@@ -7,11 +7,14 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import dev.ducnguyen.identity.dto.request.AuthenticationRequest;
 import dev.ducnguyen.identity.dto.request.IntrospectRequest;
+import dev.ducnguyen.identity.dto.request.LogoutRequest;
 import dev.ducnguyen.identity.dto.response.AuthenticationResponse;
 import dev.ducnguyen.identity.dto.response.IntrospectResponse;
+import dev.ducnguyen.identity.entity.InvalidatedToken;
 import dev.ducnguyen.identity.entity.User;
 import dev.ducnguyen.identity.exception.AppException;
 import dev.ducnguyen.identity.exception.ErrorCode;
+import dev.ducnguyen.identity.repository.InvalidatedTokenRepository;
 import dev.ducnguyen.identity.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.signer-key}")
@@ -50,17 +54,16 @@ public class AuthenticationService {
             throws JOSEException, ParseException {
 
         var token = request.getToken();
+        boolean isValid = true;
 
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY);
-
-        SignedJWT signedJWT = SignedJWT.parse(token);
-
-        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
-        var verified = signedJWT.verify(verifier);
+        try {
+            verifyToken(token);
+        } catch (AppException e){
+            isValid = false;
+        }
 
         return IntrospectResponse.builder()
-                .valid(verified && expiryTime.after(new Date()))
+                .valid(isValid)
                 .build();
     }
 
@@ -80,17 +83,51 @@ public class AuthenticationService {
                 .build();
     }
 
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var signToken = verifyToken(request.getToken());
+
+        var jit = signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expiryDate(expiryTime)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(verifier);
+
+        if (!verified && expiryTime.after(new Date()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        return signedJWT;
+    }
+
     public String generationToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
-                .issuer("duc.dev")
+                .issuer("dustin.dev")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(VALID_DURATION, ChronoUnit.HOURS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
+                .claim("userId", user.getId())
                 .claim("scope", buildScope(user))
                 .build();
 
@@ -103,7 +140,7 @@ public class AuthenticationService {
 
             return jwsObject.serialize();
         } catch (JOSEException e) {
-            log.error("Cannot create token", e.getMessage());
+            log.error("Cannot create token: ", e);
             throw new RuntimeException(e);
         }
     }

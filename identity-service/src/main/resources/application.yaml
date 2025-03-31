@@ -4,6 +4,8 @@ server:
     context-path: /identity
 
 spring:
+  application:
+    name: identity-service
   datasource:
     url: "jdbc:mysql://localhost:3306/social_d"
     username: root
@@ -21,6 +23,5 @@ spring:
 #    org.springframework.security: DEBUG
 
 jwt:
-  signer-key: "bzJqFprhA2iBjU1Nt4T+JAFNQWTik8PTp8acU7EeuOoSvvxq3eBHOywKUpWfHdpt"
-  one-day: 24 # hour
-  valid-duration: 24 # hour
+  signer-key: ${SIGNER_KEY}
+  valid-duration: 24 # in hour

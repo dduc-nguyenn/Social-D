@@ -3,6 +3,7 @@ package dev.ducnguyen.identity.controller;
 import com.nimbusds.jose.JOSEException;
 import dev.ducnguyen.identity.dto.request.AuthenticationRequest;
 import dev.ducnguyen.identity.dto.request.IntrospectRequest;
+import dev.ducnguyen.identity.dto.request.LogoutRequest;
 import dev.ducnguyen.identity.dto.response.ApiResponse;
 import dev.ducnguyen.identity.dto.response.AuthenticationResponse;
 import dev.ducnguyen.identity.dto.response.IntrospectResponse;
@@ -38,6 +39,15 @@ public class AuthenticationController {
 
         return ApiResponse.<IntrospectResponse>builder()
                 .data(data)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+            throws ParseException, JOSEException {
+        authenticationService.logout(request);
+
+        return ApiResponse.<Void>builder()
                 .build();
     }
 }
