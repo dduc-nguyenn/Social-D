@@ -24,4 +24,8 @@ spring:
 
 jwt:
   signer-key: ${SIGNER_KEY}
-  valid-duration: 24 # in hour
+  valid-duration: 4 # in hour
+
+app:
+  services:
+    profile: http://localhost:8081/profile

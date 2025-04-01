@@ -1,18 +1,19 @@
-package dev.ducnguyen.identity.dto.request;
+package dev.ducnguyen.profile.dto.response;
 
-import dev.ducnguyen.identity.enums.Gender;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
-    String password;
+public class ProfileResponse {
+    String id;
+    String userId;
     String firstName;
     String surName;
     String avatar;

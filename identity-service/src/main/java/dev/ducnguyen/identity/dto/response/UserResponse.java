@@ -16,15 +16,8 @@ public class UserResponse {
     String id;
     String username;
     String email;
-    String firstName;
-    String surName;
-    Gender gender;
-    String profilePicture;
-    String bio;
     LocalDateTime createdAt;
 
     List<PostResponse> posts;
     List<NotificationResponse> notifications;
-//    List<FriendshipResponse> friendship1;
-//    List<FriendshipResponse> friendship2;
 }

@@ -87,6 +87,7 @@ public class AuthenticationService {
         var signToken = verifyToken(request.getToken());
 
         var jit = signToken.getJWTClaimsSet().getJWTID();
+
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
         InvalidatedToken invalidatedToken = InvalidatedToken.builder()
@@ -98,12 +99,13 @@ public class AuthenticationService {
     }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
-
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        log.info(signedJWT.getJWTClaimsSet().toString());
 
         var verified = signedJWT.verify(verifier);
 

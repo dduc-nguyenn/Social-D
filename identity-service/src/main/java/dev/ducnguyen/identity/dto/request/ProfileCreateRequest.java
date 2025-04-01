@@ -1,6 +1,7 @@
 package dev.ducnguyen.identity.dto.request;
 
-import dev.ducnguyen.identity.enums.Gender;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,10 +12,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
-    String password;
+public class ProfileCreateRequest {
+    String userId;
+    @NotEmpty(message = "FIRSTNAME_EMPTY")
     String firstName;
+
+    @NotEmpty(message = "SURNAME_EMPTY")
     String surName;
+
     String avatar;
     String bio;
     String location;

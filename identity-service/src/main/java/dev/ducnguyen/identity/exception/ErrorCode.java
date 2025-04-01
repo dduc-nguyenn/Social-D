@@ -24,7 +24,7 @@ public enum ErrorCode {
 
     FIRSTNAME_EMPTY(3001, "What's your first name", HttpStatus.BAD_REQUEST),
     SURNAME_EMPTY(3002, "What's your sur name", HttpStatus.BAD_REQUEST),
-    GENDER_EMPTY(3003, "Please choose a gender. You can change who can see this later.", HttpStatus.BAD_REQUEST),
+//    GENDER_EMPTY(3003, "Please choose a gender. You can change who can see this later.", HttpStatus.BAD_REQUEST),
 
     USER_NOT_FOUND(4004, "User could not be found!", HttpStatus.NOT_FOUND),
     POST_NOT_FOUND(4005, "Post could not be found!", HttpStatus.NOT_FOUND),

@@ -46,9 +46,9 @@ public class ApplicationInitConfig {
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
                         .email("admin@gmail.com")
-                        .firstName("ad")
-                        .surName("min")
-                        .gender(Gender.OTHER)
+//                        .firstName("ad")
+//                        .surName("min")
+//                        .gender(Gender.OTHER)
                         .roles(roles)
                         .build();
 

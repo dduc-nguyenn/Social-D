@@ -30,14 +30,6 @@ public class User {
     @Column(unique = true, nullable = false)
     String email;
 
-    @Enumerated(EnumType.STRING)
-    Gender gender;
-
-    String firstName;
-    String surName;
-    String profilePicture;
-    String bio;
-
     @Column(nullable = false)
     LocalDateTime createdAt;
 

@@ -8,9 +8,11 @@ import dev.ducnguyen.identity.entity.Role;
 import dev.ducnguyen.identity.entity.User;
 import dev.ducnguyen.identity.exception.AppException;
 import dev.ducnguyen.identity.exception.ErrorCode;
+import dev.ducnguyen.identity.mapper.ProfileMapper;
 import dev.ducnguyen.identity.mapper.UserMapper;
 import dev.ducnguyen.identity.repository.RoleRepository;
 import dev.ducnguyen.identity.repository.UserRepository;
+import dev.ducnguyen.identity.repository.httpclient.ProfileClient;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,17 +35,15 @@ public class UserService {
     UserMapper userMapper;
     RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
+    ProfileClient profileClient;
+    ProfileMapper profileMapper;
 
     public UserResponse createUser(UserCreateRequest request) {
-
         if (userRepository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
 
         if (userRepository.existsByEmail(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-
-        if (request.getGender() == null)
-            throw new AppException(ErrorCode.GENDER_EMPTY);
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -52,7 +52,14 @@ public class UserService {
         roleRepository.findById(RoleConstant.USER_ROLE).ifPresent(roles::add);
         user.setRoles(roles);
 
-        return userMapper.toUserResponse(userRepository.save(user));
+        user = userRepository.save(user);
+
+        var profileRequest = profileMapper.toProfileCreateRequest(request);
+        profileRequest.setUserId(user.getId());
+        log.info("User ID: {}", user.getId());
+        profileClient.createProfile(profileRequest);
+
+        return userMapper.toUserResponse(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

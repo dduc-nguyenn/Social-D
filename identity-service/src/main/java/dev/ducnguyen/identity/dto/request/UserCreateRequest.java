@@ -5,6 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,7 +28,8 @@ public class UserCreateRequest {
     @NotEmpty(message = "SURNAME_EMPTY")
     String surName;
 
-    Gender gender;
-    String profilePicture;
+    String avatar;
     String bio;
+    String location;
+    LocalDate dob;
 }

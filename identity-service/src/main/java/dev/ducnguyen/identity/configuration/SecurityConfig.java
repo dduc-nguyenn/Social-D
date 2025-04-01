@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
         );
 
-        // Cấu hình yêu càu token mới được cấp quyền truy cáp ENDPOINT
+        // Cấu hình Spring Security: Cần có Token hợp lệ, mới được cấp quyền truy cấp Endpoint
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
                                 jwtConfigurer
