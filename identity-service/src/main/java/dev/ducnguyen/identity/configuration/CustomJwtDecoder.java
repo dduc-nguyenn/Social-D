@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import dev.ducnguyen.identity.dto.request.IntrospectRequest;
 import dev.ducnguyen.identity.exception.AppException;
 import dev.ducnguyen.identity.service.AuthenticationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -17,6 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
     @Value("${jwt.signer-key}")

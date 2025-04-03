@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import dev.ducnguyen.identity.dto.request.AuthenticationRequest;
 import dev.ducnguyen.identity.dto.request.IntrospectRequest;
 import dev.ducnguyen.identity.dto.request.LogoutRequest;
+import dev.ducnguyen.identity.dto.request.RefreshTokenRequest;
 import dev.ducnguyen.identity.dto.response.ApiResponse;
 import dev.ducnguyen.identity.dto.response.AuthenticationResponse;
 import dev.ducnguyen.identity.dto.response.IntrospectResponse;
@@ -48,6 +49,15 @@ public class AuthenticationController {
         authenticationService.logout(request);
 
         return ApiResponse.<Void>builder()
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request)
+            throws ParseException, JOSEException {
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .data(authenticationService.refreshToken(request))
                 .build();
     }
 }

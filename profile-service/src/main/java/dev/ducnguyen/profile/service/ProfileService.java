@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -23,10 +25,20 @@ public class ProfileService {
         return profileMapper.toProfileResponse(profileRepository.save(profile));
     }
 
+    public List<ProfileResponse> getAllProfile() {
+        return profileRepository.findAll().stream()
+                .map(profileMapper::toProfileResponse)
+                .toList();
+    }
+
     public ProfileResponse getProfileById(String id) {
         Profile profile = profileRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Not found profile with id: " + id));
 
         return profileMapper.toProfileResponse(profile);
+    }
+
+    public void deleteProfileById(String id) {
+        profileRepository.deleteById(id);
     }
 }

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -20,8 +22,18 @@ public class ProfileController {
         return profileService.createProfile(request);
     }
 
+    @GetMapping
+    List<ProfileResponse> getList() {
+        return profileService.getAllProfile();
+    }
+
     @GetMapping("/{profileId}")
     ProfileResponse getById(@PathVariable String profileId) {
         return profileService.getProfileById(profileId);
+    }
+
+    @DeleteMapping("/{profileId}")
+    void delete(@PathVariable String profileId) {
+        profileService.deleteProfileById(profileId);
     }
 }
