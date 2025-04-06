@@ -11,19 +11,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/internal/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ProfileController {
+public class InternalProfileController {
     ProfileService profileService;
 
-    @GetMapping("/{profileId}")
-    ProfileResponse getById(@PathVariable String profileId) {
-        return profileService.getProfileById(profileId);
+    @PostMapping
+    ProfileResponse create(@RequestBody ProfileCreateRequest request) {
+        return profileService.createProfile(request);
     }
 
-    @GetMapping
-    List<ProfileResponse> getList() {
-        return profileService.getAllProfile();
+    @DeleteMapping("/{profileId}")
+    void delete(@PathVariable String profileId) {
+        profileService.deleteProfileById(profileId);
     }
 }

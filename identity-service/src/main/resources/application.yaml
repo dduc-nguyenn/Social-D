@@ -24,8 +24,8 @@ spring:
 
 jwt:
   signer-key: ${SIGNER_KEY}
-  valid-duration: 20 # in second
-  refreshable-duration: 60 # in second
+  valid-duration: 3600 # in second
+  refreshable-duration: 7200 # in second
 
 app:
   services:
