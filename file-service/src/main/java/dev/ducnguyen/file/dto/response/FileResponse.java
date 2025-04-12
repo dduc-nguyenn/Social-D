@@ -1,4 +1,4 @@
-package dev.ducnguyen.identity.dto.request;
+package dev.ducnguyen.file.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PostUpdateRequest {
-    String content;
-    String mediaUrl;
-    String privacy;
+public class FileResponse {
+    String originalFilename;
+    String url;
 }

@@ -1,10 +1,8 @@
 package dev.ducnguyen.identity.service;
 
 import dev.ducnguyen.identity.entity.Friendship;
-import dev.ducnguyen.identity.entity.Notification;
 import dev.ducnguyen.identity.entity.User;
 import dev.ducnguyen.identity.enums.FriendshipStatus;
-import dev.ducnguyen.identity.enums.NotificationType;
 import dev.ducnguyen.identity.exception.AppException;
 import dev.ducnguyen.identity.exception.ErrorCode;
 import dev.ducnguyen.identity.repository.FriendshipRepository;
@@ -24,8 +22,6 @@ public class FriendshipService {
     UserService userService;
     UserRepository userRepository;
 
-    NotificationService notificationService;
-
     public void addFriend(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -43,17 +39,6 @@ public class FriendshipService {
                 .user2(user)
                 .status(FriendshipStatus.PENDING)
                 .build();
-
-        String message = userService.getCurrentUser().getUsername() + " just sent you a friend request.";
-
-        Notification notification = Notification.builder()
-                .type(NotificationType.FRIEND_REQUEST)
-                .content(message)
-                .isRead(false)
-                .user(user)
-                .build();
-
-        notificationService.createNotification(notification);
 
         friendshipRepository.save(friendship);
     }

@@ -46,9 +46,6 @@ public class User {
     @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Friendship> friendship2;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Notification> notifications;
-
     @ManyToMany
     Set<Role> roles;
 

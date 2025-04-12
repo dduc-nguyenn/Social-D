@@ -1,6 +1,5 @@
 package dev.ducnguyen.identity.dto.response;
 
-import dev.ducnguyen.identity.enums.Privacy;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,6 +14,6 @@ public class PostResponse {
     String id;
     String content;
     String mediaUrl;
-    Privacy privacy;
+    String privacy;
     LocalDateTime createdAt;
 }

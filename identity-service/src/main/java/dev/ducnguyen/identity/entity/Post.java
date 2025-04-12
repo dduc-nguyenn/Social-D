@@ -1,6 +1,5 @@
 package dev.ducnguyen.identity.entity;
 
-import dev.ducnguyen.identity.enums.Privacy;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,8 +24,7 @@ public class Post {
 
     String mediaUrl;
 
-    @Enumerated(EnumType.STRING)
-    Privacy privacy;
+    String privacy;
 
     @Column(nullable = false)
     LocalDateTime createdAt;
