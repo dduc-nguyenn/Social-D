@@ -1,6 +1,6 @@
 package dev.ducnguyen.profile.controller;
 
-import dev.ducnguyen.profile.dto.request.ProfileCreateRequest;
+import dev.ducnguyen.profile.dto.ApiResponse;
 import dev.ducnguyen.profile.dto.response.ProfileResponse;
 import dev.ducnguyen.profile.service.ProfileService;
 import lombok.AccessLevel;
@@ -17,13 +17,17 @@ import java.util.List;
 public class ProfileController {
     ProfileService profileService;
 
-    @GetMapping("/{profileId}")
-    ProfileResponse getById(@PathVariable String profileId) {
-        return profileService.getProfileById(profileId);
+    @GetMapping("/{id}")
+    ApiResponse<ProfileResponse> getById(@PathVariable String id) {
+        return ApiResponse.<ProfileResponse>builder()
+                .data(profileService.getProfileById(id))
+                .build();
     }
 
     @GetMapping
-    List<ProfileResponse> getList() {
-        return profileService.getAllProfile();
+    ApiResponse<List<ProfileResponse>> getList() {
+        return ApiResponse.<List<ProfileResponse>>builder()
+                .data(profileService.getAllProfile())
+                .build();
     }
 }

@@ -5,8 +5,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +13,7 @@ import java.time.LocalDate;
 public class ProfileResponse {
     String id;
     String userId;
+    String username;
     String firstName;
     String surName;
     String avatar;

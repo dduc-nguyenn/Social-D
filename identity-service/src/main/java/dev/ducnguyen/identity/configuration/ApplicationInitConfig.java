@@ -3,7 +3,6 @@ package dev.ducnguyen.identity.configuration;
 import dev.ducnguyen.identity.constant.RoleConstant;
 import dev.ducnguyen.identity.entity.Role;
 import dev.ducnguyen.identity.entity.User;
-import dev.ducnguyen.identity.enums.Gender;
 import dev.ducnguyen.identity.repository.RoleRepository;
 import dev.ducnguyen.identity.repository.UserRepository;
 import lombok.AccessLevel;
@@ -46,9 +45,6 @@ public class ApplicationInitConfig {
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
                         .email("admin@gmail.com")
-//                        .firstName("ad")
-//                        .surName("min")
-//                        .gender(Gender.OTHER)
                         .roles(roles)
                         .build();
 

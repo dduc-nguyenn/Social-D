@@ -1,6 +1,5 @@
 package dev.ducnguyen.identity.entity;
 
-import dev.ducnguyen.identity.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,7 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +31,8 @@ public class User {
     String email;
 
     @Column(nullable = false)
-    LocalDateTime createdAt;
+    @Builder.Default
+    LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Post> posts;
@@ -51,8 +52,8 @@ public class User {
     @ManyToMany
     Set<Role> roles;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        createdAt = LocalDateTime.now();
+//    }
 }

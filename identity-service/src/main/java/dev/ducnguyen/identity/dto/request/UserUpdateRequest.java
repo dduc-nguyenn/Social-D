@@ -1,6 +1,5 @@
 package dev.ducnguyen.identity.dto.request;
 
-import dev.ducnguyen.identity.enums.Gender;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

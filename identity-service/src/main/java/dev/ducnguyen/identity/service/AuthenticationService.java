@@ -81,9 +81,11 @@ public class AuthenticationService {
         if (!authenticated)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
+        var token = generationToken(user);
+
         return AuthenticationResponse.builder()
-                .token(generationToken(user))
-                .authenticated(true)
+                .token(token.token)
+                .expiryTime(token.expiryDate)
                 .build();
     }
 
@@ -128,8 +130,8 @@ public class AuthenticationService {
         var token = generationToken(user);
 
         return AuthenticationResponse.builder()
-                .token(token)
-                .authenticated(true)
+                .token(token.token)
+                .expiryTime(token.expiryDate)
                 .build();
     }
 
@@ -156,18 +158,22 @@ public class AuthenticationService {
         return signedJWT;
     }
 
-    public String generationToken(User user) {
+    private TokenInfo generationToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
+        Date issueTime = new Date();
+
+        Date expiryTime = new Date(Instant.ofEpochMilli(issueTime.getTime())
+                .plus(VALID_DURATION, ChronoUnit.SECONDS)
+                .toEpochMilli()
+        );
+
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId())
                 .issuer("dustin.dev")
-                .issueTime(new Date())
-                .expirationTime(new Date(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
-                ))
+                .issueTime(issueTime)
+                .expirationTime(expiryTime)
                 .jwtID(UUID.randomUUID().toString())
-                .claim("userId", user.getId())
                 .claim("scope", buildScope(user))
                 .build();
 
@@ -178,7 +184,7 @@ public class AuthenticationService {
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
 
-            return jwsObject.serialize();
+            return new TokenInfo(jwsObject.serialize(), expiryTime);
         } catch (JOSEException e) {
             log.error("Cannot create token: ", e);
             throw new RuntimeException(e);
@@ -194,4 +200,6 @@ public class AuthenticationService {
 
         return stringJoiner.toString();
     }
+
+    private record TokenInfo(String token, Date expiryDate) {}
 }

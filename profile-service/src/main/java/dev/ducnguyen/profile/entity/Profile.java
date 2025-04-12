@@ -24,7 +24,7 @@ public class Profile {
 
     @Property("userId")
     String userId;
-
+    String username;
     String firstName;
     String surName;
     String avatar;

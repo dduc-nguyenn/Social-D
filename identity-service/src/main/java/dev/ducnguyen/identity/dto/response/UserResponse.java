@@ -1,11 +1,10 @@
 package dev.ducnguyen.identity.dto.response;
 
-import dev.ducnguyen.identity.enums.Gender;
+import dev.ducnguyen.identity.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -16,8 +15,5 @@ public class UserResponse {
     String id;
     String username;
     String email;
-    LocalDateTime createdAt;
-
-    List<PostResponse> posts;
-    List<NotificationResponse> notifications;
+    Set<Role> roles;
 }

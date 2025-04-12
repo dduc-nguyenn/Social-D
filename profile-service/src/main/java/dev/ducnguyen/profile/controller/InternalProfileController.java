@@ -1,5 +1,6 @@
 package dev.ducnguyen.profile.controller;
 
+import dev.ducnguyen.profile.dto.ApiResponse;
 import dev.ducnguyen.profile.dto.request.ProfileCreateRequest;
 import dev.ducnguyen.profile.dto.response.ProfileResponse;
 import dev.ducnguyen.profile.service.ProfileService;
@@ -18,12 +19,25 @@ public class InternalProfileController {
     ProfileService profileService;
 
     @PostMapping
-    ProfileResponse create(@RequestBody ProfileCreateRequest request) {
-        return profileService.createProfile(request);
+    ApiResponse<ProfileResponse> create(@RequestBody ProfileCreateRequest request) {
+        return ApiResponse.<ProfileResponse>builder()
+                .data(profileService.createProfile(request))
+                .build();
     }
 
     @DeleteMapping("/{profileId}")
-    void delete(@PathVariable String profileId) {
+    ApiResponse<String> delete(@PathVariable String profileId) {
         profileService.deleteProfileById(profileId);
+        return ApiResponse.<String>builder()
+                .data("Profile deleted!")
+                .build();
     }
+
+    @GetMapping("/{userId}")
+    ApiResponse<ProfileResponse> getProfile(@PathVariable String userId) {
+        return ApiResponse.<ProfileResponse>builder()
+                .data(profileService.getProfileByUserId(userId))
+                .build();
+    }
+
 }

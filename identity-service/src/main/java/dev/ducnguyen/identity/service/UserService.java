@@ -1,5 +1,6 @@
 package dev.ducnguyen.identity.service;
 
+import dev.ducnguyen.event.dto.NotificationEvent;
 import dev.ducnguyen.identity.constant.RoleConstant;
 import dev.ducnguyen.identity.dto.request.UserCreateRequest;
 import dev.ducnguyen.identity.dto.request.UserUpdateRequest;
@@ -17,6 +18,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +40,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     ProfileClient profileClient;
     ProfileMapper profileMapper;
+    KafkaTemplate<String, Object> kafkaTemplate;
 
     public UserResponse createUser(UserCreateRequest request) {
         if (userRepository.existsByUsername(request.getUsername()))
@@ -52,14 +56,30 @@ public class UserService {
         roleRepository.findById(RoleConstant.USER_ROLE).ifPresent(roles::add);
         user.setRoles(roles);
 
-        user = userRepository.save(user);
+        try {
+            user = userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
 
         var profileRequest = profileMapper.toProfileCreateRequest(request);
         profileRequest.setUserId(user.getId());
-        log.info("User ID: {}", user.getId());
-        profileClient.createProfile(profileRequest);
 
-        return userMapper.toUserResponse(user);
+        var profile = profileClient.createProfile(profileRequest);
+
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .channel("EMAIL")
+                .recipient(user.getEmail())
+                .subject("Welcome to Social-D")
+                .body("Hello, <strong>" + user.getUsername() + "</strong>!!!")
+                .build();
+
+        kafkaTemplate.send("notification-delivery", notificationEvent);
+
+        var userCreateResponse = userMapper.toUserResponse(user);
+        userCreateResponse.setId(profile.getData().getId());
+
+        return userCreateResponse;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -69,7 +89,12 @@ public class UserService {
     }
 
     public UserResponse getMyInfoUser(){
-        return userMapper.toUserResponse(getCurrentUser());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        return userMapper.toUserResponse(user);
     }
 
     public UserResponse getUserById(String id) {
